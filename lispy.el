@@ -5039,17 +5039,6 @@ When region is active, call `lispy-mark-car'."
   (let (outline-eval-tag)
     (cond ((region-active-p)
            (lispy-mark-car))
-          ((looking-at lispy-outline)
-           (outline-minor-mode 1)
-           (condition-case e
-               (lispy-flet (org-unlogged-message (&rest _x))
-                 (require 'org)
-                 (let ((org-outline-regexp outline-regexp))
-                   (org-cycle-internal-local)))
-             (error
-              (if (string= (error-message-string e) "before first heading")
-                  (outline-next-visible-heading 1)
-                (signal (car e) (cdr e))))))
           ((looking-at (setq outline-eval-tag (format "^%s =>" lispy-outline-header)))
            (let* ((bnd (lispy--bounds-comment))
                   (beg (car bnd))
