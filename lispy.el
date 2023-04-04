@@ -133,7 +133,6 @@
 
 ;;* Requires
 (eval-when-compile
-  (require 'org)
   (require 'iedit)
   (require 'eldoc)
   (require 'ediff)
