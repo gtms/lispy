@@ -5053,30 +5053,7 @@ When region is active, call `lispy-mark-car'."
 (defun lispy--show-hidden-outlines ()
   (remove-overlays (point-min) (point-max) 'invisible 'outline))
 
-(defun lispy--org-content ()
-  (require 'org)
-  (lispy--show-hidden-outlines)
-  (save-excursion
-    (goto-char (point-max))
-    (let ((last (point)))
-      (while (re-search-backward outline-regexp nil t)
-        (org-flag-region (line-end-position) last t 'outline)
-        (setq last (line-end-position 0))))))
-
 (defvar lispy--outline-state 'show-all)
-
-(defun lispy-shifttab ()
-  "Hide/show outline summary."
-  (interactive)
-  (outline-minor-mode 1)
-  (let ((outline-regexp lispy-outline))
-    (if (eq lispy--outline-state 'show-all)
-        (progn
-          (setq lispy--outline-state 'content)
-          (lispy--org-content))
-      (setq lispy--outline-state 'show-all)
-      (lispy--show-hidden-outlines)))
-  (recenter))
 
 ;;* Locals: refactoring
 (defun lispy-to-lambda ()
@@ -9112,7 +9089,6 @@ FUNC is obtained from (`lispy--insert-or-call' DEF PLIST)."
     ;; miscellanea
     (define-key map (kbd "SPC") 'lispy-space)
     (lispy-define-key map "i" 'lispy-tab)
-    (lispy-define-key map "I" 'lispy-shifttab)
     (lispy-define-key map "N" 'lispy-narrow)
     (lispy-define-key map "W" 'lispy-widen)
     (lispy-define-key map "c" 'lispy-clone)
@@ -9682,7 +9658,6 @@ When ARG is non-nil, unquote the current string."
     (define-key map (kbd "M-RET") 'lispy-meta-return)
     ;; misc
     (define-key map (kbd "M-i") 'lispy-iedit)
-    (define-key map (kbd "<backtab>") 'lispy-shifttab)
     ;; outline
     (define-key map (kbd "M-<left>") 'lispy-outline-demote)
     (define-key map (kbd "M-<right>") 'lispy-outline-promote)
