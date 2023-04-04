@@ -67,8 +67,11 @@
 (defvar lispy--clojure-middleware-loaded-hash (make-hash-table :test #'equal)
   "Nil if the Clojure middleware in \"lispy-clojure.clj\" wasn't loaded yet.")
 
+;; Caution for undefined variable
+(defvar org-src-mode)
+
 (defun lispy--clojure-process-buffer ()
-  (if (or org-src-mode (eq major-mode 'org-mode))
+  (if (or (and (featurep 'org-src) org-src-mode) (eq major-mode 'org-mode))
       (cadr (first (sesman--all-system-sessions 'CIDER)))
     (let ((cur-type (cider-repl-type-for-buffer)))
       (car (cider-repls cur-type nil)))))
