@@ -139,7 +139,6 @@
   (require 'ediff-util)
   (require 'semantic)
   (require 'semantic/db))
-(require 'zoutline)
 (require 'mode-local)
 (require 'lispy-tags)
 (require 'help-fns)
@@ -2156,36 +2155,6 @@ When ARG is nagative, add them above instead"
       (newline (- arg))
       (lispy--indent-for-tab))))
 
-(defun lispy-meta-return ()
-  "Insert a new heading."
-  (interactive)
-  (let ((pt (point))
-        (lvl (lispy-outline-level)))
-    (cond ((lispy--in-comment-p)
-           (goto-char (cdr (zo-bnd-subtree)))
-           (when (looking-back "\n+" (point-min))
-             (delete-region (match-beginning 0) (match-end 0)))
-           (insert "\n\n"))
-          ((and (lispy-bolp)
-                (looking-at " *$"))
-           (delete-region
-            (line-beginning-position)
-            (line-end-position)))
-          (t
-           (lispy-beginning-of-defun)
-           (if (save-excursion
-                 (forward-list 1)
-                 (= (point) pt))
-               (progn
-                 (forward-list 1)
-                 (newline))
-             (newline)
-             (backward-char 1))))
-    (insert lispy-outline-header
-            (make-string (max lvl 1) ?\*)
-            " ")
-    (beginning-of-line)))
-
 (defun lispy-alt-line (&optional N)
   "Do a context-aware exit, then `newline-and-indent', N times.
 
@@ -3069,37 +3038,12 @@ Precondition: the region is active and the point is at `region-beginning'."
       (lispy-different))
     (cond ((region-active-p)
            (lispy--move-up-region arg))
-          ((looking-at lispy-outline)
-           (lispy-move-outline-up arg))
           (t
            (lispy--mark (lispy--bounds-dwim))
            (lispy-move-up arg)
            (deactivate-mark)
            (lispy-different)))
     (unless at-start (lispy-different))))
-
-(declare-function zo-up "zoutline")
-(defun lispy-move-outline-up (arg)
-  (interactive)
-  (require 'zoutline)
-  (lispy-dotimes arg
-    (let ((lvl1 (lispy-outline-level))
-          (lvl2 (save-excursion
-                  (backward-char)
-                  (lispy-outline-level))))
-      (when (<= lvl1 lvl2)
-        (let ((bnd1 (lispy--bounds-outline))
-              (bnd2 (progn
-                      (zo-up 1)
-                      (lispy--bounds-outline))))
-          (if (or (equal bnd1 bnd2)
-                  (and (eq (car bnd2) (point-min))
-                       (not (save-excursion
-                              (goto-char (point-min))
-                              (looking-at lispy-outline)))))
-              (goto-char (car bnd1))
-            (lispy--swap-regions bnd1 bnd2)
-            (goto-char (car bnd2))))))))
 
 (defun lispy--move-down-region (arg)
   "Swap the marked region ARG positions down.
