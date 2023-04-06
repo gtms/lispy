@@ -2156,36 +2156,6 @@ When ARG is nagative, add them above instead"
       (newline (- arg))
       (lispy--indent-for-tab))))
 
-(defun lispy-meta-return ()
-  "Insert a new heading."
-  (interactive)
-  (let ((pt (point))
-        (lvl (lispy-outline-level)))
-    (cond ((lispy--in-comment-p)
-           (goto-char (cdr (zo-bnd-subtree)))
-           (when (looking-back "\n+" (point-min))
-             (delete-region (match-beginning 0) (match-end 0)))
-           (insert "\n\n"))
-          ((and (lispy-bolp)
-                (looking-at " *$"))
-           (delete-region
-            (line-beginning-position)
-            (line-end-position)))
-          (t
-           (lispy-beginning-of-defun)
-           (if (save-excursion
-                 (forward-list 1)
-                 (= (point) pt))
-               (progn
-                 (forward-list 1)
-                 (newline))
-             (newline)
-             (backward-char 1))))
-    (insert lispy-outline-header
-            (make-string (max lvl 1) ?\*)
-            " ")
-    (beginning-of-line)))
-
 (defun lispy-alt-line (&optional N)
   "Do a context-aware exit, then `newline-and-indent', N times.
 
