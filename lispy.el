@@ -3078,29 +3078,6 @@ Precondition: the region is active and the point is at `region-beginning'."
            (lispy-different)))
     (unless at-start (lispy-different))))
 
-(declare-function zo-up "zoutline")
-(defun lispy-move-outline-up (arg)
-  (interactive)
-  (require 'zoutline)
-  (lispy-dotimes arg
-    (let ((lvl1 (lispy-outline-level))
-          (lvl2 (save-excursion
-                  (backward-char)
-                  (lispy-outline-level))))
-      (when (<= lvl1 lvl2)
-        (let ((bnd1 (lispy--bounds-outline))
-              (bnd2 (progn
-                      (zo-up 1)
-                      (lispy--bounds-outline))))
-          (if (or (equal bnd1 bnd2)
-                  (and (eq (car bnd2) (point-min))
-                       (not (save-excursion
-                              (goto-char (point-min))
-                              (looking-at lispy-outline)))))
-              (goto-char (car bnd1))
-            (lispy--swap-regions bnd1 bnd2)
-            (goto-char (car bnd2))))))))
-
 (defun lispy--move-down-region (arg)
   "Swap the marked region ARG positions down.
 Precondition: the region is active and the point is at `region-beginning'."
