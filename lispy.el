@@ -3039,8 +3039,6 @@ Precondition: the region is active and the point is at `region-beginning'."
       (lispy-different))
     (cond ((region-active-p)
            (lispy--move-up-region arg))
-          ((looking-at lispy-outline)
-           (lispy-move-outline-up arg))
           (t
            (lispy--mark (lispy--bounds-dwim))
            (lispy-move-up arg)
