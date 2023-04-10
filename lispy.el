@@ -5409,55 +5409,6 @@ The bindings of `lispy-backward' or `lispy-mark-symbol' can also be used."
     (setq lispy-map-format-function 'identity)
     (lispy-map-make-input-overlay (point) (point))))
 
-;;* Locals: multiple cursors
-(declare-function mc/create-fake-cursor-at-point "ext:multiple-cursors-core")
-(declare-function multiple-cursors-mode "ext:multiple-cursors-core")
-(declare-function mc/all-fake-cursors "ext:multiple-cursors-core")
-(declare-function mc/maybe-multiple-cursors-mode "ext:multiple-cursors-core")
-(declare-function mc/mark-lines "ext:mc-mark-more")
-(declare-function mc/remove-fake-cursors "ext:multiple-cursors-core")
-
-(defun lispy-cursor-down (arg)
-  "Add ARG cursors using `lispy-down'."
-  (interactive "p")
-  (require 'multiple-cursors)
-  (if (and (mc/all-fake-cursors)
-           (not (eq last-command
-                    'lispy-cursor-down)))
-      (progn
-        (deactivate-mark)
-        (mc/remove-fake-cursors))
-    (if (lispy-left-p)
-        (lispy-dotimes arg
-          (mc/create-fake-cursor-at-point)
-          (cl-loop do (lispy-down 1)
-             while (mc/all-fake-cursors (point) (1+ (point)))))
-      (mc/mark-lines arg 'forwards))
-    (mc/maybe-multiple-cursors-mode)))
-
-(eval-after-load 'multiple-cursors
-  '(defadvice mc/execute-command-for-all-fake-cursors
-    (around lispy-other-mode-mc (cmd) activate)
-    (unless (and (eq cmd 'special-lispy-other-mode)
-                 (or (lispy-left-p)
-                     (lispy-right-p)
-                     (region-active-p)))
-      ad-do-it)))
-
-(defun lispy-cursor-ace ()
-  "Add a cursor at a visually selected paren.
-Currently, only one cursor can be added with local binding.
-Any amount can be added with a global binding."
-  (interactive)
-  (require 'multiple-cursors)
-  (mc/create-fake-cursor-at-point)
-  (lispy--avy-do
-   "("
-   (cons (window-start) (window-end))
-   (lambda () (not (lispy--in-string-or-comment-p)))
-   lispy-avy-style-paren)
-  (mc/maybe-multiple-cursors-mode))
-
 ;;* Locals: ediff
 (defun lispy-store-region-and-buffer ()
   "Store current buffer and `lispy--bounds-dwim'."
