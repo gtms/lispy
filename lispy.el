@@ -8888,8 +8888,6 @@ FUNC is obtained from (`lispy--insert-or-call' DEF PLIST)."
   (let ((func (defalias (intern (concat "special-" (symbol-name def)))
                 (lispy--insert-or-call def plist))))
     (add-to-list 'ac-trigger-commands func)
-    (unless (memq func mc/cmds-to-run-once)
-      (add-to-list 'mc/cmds-to-run-for-all func))
     (eldoc-add-command func)
     (define-key keymap (kbd key) func)))
 
