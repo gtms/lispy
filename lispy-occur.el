@@ -111,18 +111,6 @@
   (when (lispy-occur-action-goto-end x)
     (goto-char (match-beginning 0))))
 
-(defun lispy-occur-action-mc (_x)
-  "Make a fake cursor for each `lispy-occur' candidate."
-  (let ((cands (nreverse ivy--old-cands))
-        cand)
-    (while (setq cand (pop cands))
-      (goto-char lispy--occur-beg)
-      (forward-line (read cand))
-      (re-search-forward (ivy--regex ivy-text) (line-end-position) t)
-      (when cands
-        (mc/create-fake-cursor-at-point))))
-  (multiple-cursors-mode 1))
-
 (ivy-set-actions
  'lispy-occur
  '(("m" lispy-occur-action-mc "multiple-cursors")
