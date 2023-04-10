@@ -5755,7 +5755,6 @@ An equivalent of `cl-destructuring-bind'."
   ("j" lispy-debug-step-in "debug step in")
   ("k" lispy-extract-block "extract block")
   ("l" lispy-to-lambda "to lambda")
-  ("m" lispy-cursor-ace "multi cursor")
   ("n" lispy-cd)
   ;; ("o" nil)
   ("p" lispy-set-python-process "process")
@@ -8855,14 +8854,6 @@ If `lispy-safe-paste' is non-nil, any unmatched delimiters will be added to it."
 ;;* Key definitions
 (defvar ac-trigger-commands '(self-insert-command))
 
-(defvar mc/cmds-to-run-for-all nil)
-(defvar mc/cmds-to-run-once nil)
-(mapc (lambda (x) (add-to-list 'mc/cmds-to-run-once x))
-      '(lispy-cursor-down))
-(mapc (lambda (x) (add-to-list 'mc/cmds-to-run-for-all x))
-      '(lispy-parens lispy-brackets lispy-braces lispy-quotes
-        lispy-kill lispy-delete))
-
 (defadvice ac-handle-post-command (around ac-post-command-advice activate)
   "Don't `auto-complete' when region is active."
   (unless (region-active-p)
@@ -9514,7 +9505,6 @@ When ARG is non-nil, unquote the current string."
     (define-key map (kbd "C-2") 'lispy-arglist-inline)
     (define-key map (kbd "C-3") 'lispy-right)
     (define-key map (kbd "C-4") 'lispy-x)
-    (define-key map (kbd "C-7") 'lispy-cursor-down)
     (define-key map (kbd "C-8") 'lispy-parens-down)
     (define-key map (kbd "C-9") 'lispy-out-forward-newline)
     map))
